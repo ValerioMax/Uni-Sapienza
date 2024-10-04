@@ -1,0 +1,5 @@
+Si ha
+	40 usec < (2/100) * T_totale
+-->	40 usec < (2/100) * (time_slice + 40 usec)
+-->	2000 usec < time_slice + 40 usec
+-->	time_slice > 1960 usec = 1.96 msex

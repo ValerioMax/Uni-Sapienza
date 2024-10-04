@@ -1,0 +1,7 @@
+spazio_logico_processi = 2^24
+dim_tabella = 1024 B
+dim_entry = 32 bit = 4 B
+
+num_pagine = dim_tabella / dim_entry = 2^8
+
+dim_pagina = spazio_logico_processi / num_pagine = 2^16 B = 64 KB

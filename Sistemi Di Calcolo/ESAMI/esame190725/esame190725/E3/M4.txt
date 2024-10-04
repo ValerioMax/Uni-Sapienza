@@ -1,0 +1,10 @@
+si ha
+spazio_logico = 2^20
+dim_tabella = 2KB = 2^11 B
+dim_entry = 32 bit = 2^2 B
+
+dunque
+num_pagine = dim_tabella / dim_entry = 2^11 B / 2^2 B = 2^9
+dim_pagina = spazio_logico / num_pagine = 2^20 / 2^9 = 2^11
+
+--> abbiamo 2^11 B = 2KB

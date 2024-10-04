@@ -1,0 +1,6 @@
+struct S {		base
+	char a;		(x.  ) base+0
+	short b;	(  xx) base+2
+	char c;		(x...) base+4
+	int d;		(xxxx) base+8
+};

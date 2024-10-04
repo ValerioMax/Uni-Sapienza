@@ -1,0 +1,13 @@
+Si ha:	T_tot = T_s + T_c
+
+dove
+T_tot = tempo totale
+T_s = time slice
+T_c = tempo context switch = 50 usec
+
+dunque possiamo impostare la disequazione:
+
+	50 usec < (1/100) * T_tot
+	50*100 usec < T_s + 50 usec
+	4950 usec < T_s
+	4.95 msec < T_s

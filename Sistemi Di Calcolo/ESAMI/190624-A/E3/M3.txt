@@ -1,0 +1,6 @@
+speedup = 1 / (alpha/k + 1 - alpha)
+
+k = 1.5
+speedup = 1.2
+
+risolvendo l'eq in alpha si trova alpha = 0.5

@@ -1,0 +1,9 @@
+La legge di Amdal è questa:
+
+speedup = 1 / [(alpha/k) + 1 - alpha]
+
+si ha
+speedup = 1.4
+k = 3.5
+
+risolvendo per alpha si trova alpha = 0.44

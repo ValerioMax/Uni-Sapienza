@@ -1,0 +1,6 @@
+typedef struct S {	base
+	short x;		(XX..) base
+	char *y;		(XXXX) base+4
+	char z;			(X...) base+8
+	int w;			(XXXX) base+12
+} S;
