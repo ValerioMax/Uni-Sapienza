@@ -1,0 +1,37 @@
+1.
+select persona.nome, citta.regione
+from persona, citta
+where persona.eta >= 18 and persona.cittaNascita = citta.nome
+
+2.
+select c.regione
+from persona as p, citta as c, genia as g
+where p.nome = g.genitore and p.eta > 50 and p.cittaNascita = c.nome
+
+3.
+select g.figlio, g.genitore
+from genia as g, persona as p1, persona as p2
+where g.figlio = p1.nome and g.genitore = p2.nome and p1.cittaNacita = p2.cittaNascita
+
+4.
+select g2.genitore
+from genia as g1, genia as g2, persona as p
+where g1.genitore = g2.figlio and g2.genitore = p.nome and p.sesso = 'M'
+
+5.
+select distinct	c.regione
+from genia as g1, genia as g2, persona as p, citta as c
+where g1.genitore = g2.figlio and g2.genitore = p.nome and p.sesso = 'M'
+		and c.nome = p.cittaNascita and p.eta < 60
+
+6.
+select g1.figlio, g2.figlio
+from genia as g1, genia as g2
+where g1.genitore = g2.genitore and g1.figlio < g2.figlio
+
+7.
+select g2nonno.genitore , g2nonna.genitore
+from genia as g1, genia as g2nonno, genia as g2nonna, persona as pNonno, persona as pNonna
+where g1.genitore = g2nonno.figlio and g1.genitore = g2nonna.figlio
+		and pNonno.nome = g2nonno.genitore and pNonna.nome = g2nonna.genitore
+		and pNonno.sesso = 'M' and pNonna.sesso = 'F'
