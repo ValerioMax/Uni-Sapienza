@@ -1,0 +1,58 @@
+1.
+select	p.nome, c.regione, p.eta
+from	persona p join citta c on c.nome = p.cittaNascita
+where	eta > 18
+
+2.
+select distinct regione
+from citta
+where nome in (select c.nome
+			   from persona p, citta c, genia g
+			   where	g.genitore = p.nome and
+			   			p.cittaNascita = c.nome and
+			   			p.eta > 50
+			  )
+
+3.
+select g.genitore, g.figlio
+from persona pg, persona pf, genia g
+where 	pg.nome = g.genitore and
+		pf.nome = g.figlio and
+		pg.cittaNascita = pf.cittaNascita
+
+4.
+select distinct p.nome
+from persona p, genia g1, genia g2
+where	g2.figlio = g1.genitore and
+		p.nome = g2.genitore and
+		p.sesso = 'M'
+
+5.
+select distinct regione
+from citta
+where nome in (select p.cittaNascita
+			   from persona p, genia g1, genia g2
+			   where	g1.genitore = g2.figlio and
+			   			g2.genitore = p.nome and
+			   			p.sesso = 'M' and
+			   			p.eta < 60
+			  )
+
+6.
+select distinct g1.figlio as fratello1, g3.figlio as fratello2
+from genia g1, genia g2, genia g3, genia g4
+where 	g1.figlio = g2.figlio and g3.figlio = g4.figlio
+		and g1.genitore != g2.genitore
+		and g1.genitore = g3.genitore
+		and g2.genitore = g4.genitore
+		and g1.figlio < g3.figlio
+
+7.
+select p1.nome, p2.nome
+from persona p0, persona p1, persona p2, genia g1, genia g2nonno, genia g2nonna
+where	g1.genitore = g2nonno.figlio and
+		g1.genitore = g2nonna.figlio and
+		p0.nome = g2nonno.figlio and p0.nome = g2nonna.figlio and
+		p1.nome = g2nonno.genitore and p2.nome = g2nonna.genitore and
+		p0.sesso = 'M' and p1.sesso = 'M' and p2.sesso = 'F' and
+		g2nonno.genitore is not null and g2nonna.genitore is not null
