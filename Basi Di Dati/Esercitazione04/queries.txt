@@ -1,0 +1,77 @@
+1.
+select c.targaauto, c.codgarage, g.citta
+from garage g, custodita c
+where g.codice = c.codgarage and c.numero = 1
+order by c.targaauto
+
+2.
+select distinct g.citta, a.targa
+from automobile a, garage g, custodita c
+where 	a.cilindrata > 100 and
+		a.targa = c.targaauto and
+		g.codice = c.codgarage and
+		c.numero > 10
+
+--oppure
+
+select distinct g.citta, a.targa
+from automobile a, garage g
+where 	a.cilindrata > 100 and
+		a.targa in (select targa
+					from automobile, custodita
+					where 	targa = targaauto and
+							codgarage = g.codice and
+							numero > 10
+					)
+
+3.
+select codgarage, sum(numero)
+from custodita
+where targaauto is not null
+group by codgarage
+
+4.
+select codgarage, sum(numero)
+from custodita
+group by codgarage
+having sum(numero) > 10 or sum(numero) is null
+
+5.
+with v as
+	(select a.targa, g.codice
+	 from automobile a, garage g
+	 where g.citta = a.citta
+	)
+select v.targa, sum(c.numero), count(v.codice)
+from v, custodita c
+where v.targa = c.targaauto and v.codice = c.codgarage --devo collegare custodita per lavorare su numero => deve essere tutto uguale
+group by v.targa
+
+6.
+select codice
+from garage
+
+except
+
+select g.codice
+from automobile a join custodita on  targa = targaauto 
+		join garage g on codice = codgarage
+where a.citta = 'Roma'
+
+7.
+select codice
+from garage
+
+except
+
+select g.codice
+from automobile a, garage g, custodita c
+where 	g.citta <> a.citta and
+		a.targa = c.targaauto and
+		g.codice = c.codgarage
+
+8.
+
+9.
+
+10.
