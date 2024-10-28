@@ -1,0 +1,91 @@
+1.
+select distinct a.codice
+from autore a join scritto s on a.codice = s.codicea 
+		join libro l on s.titolo = l.titolo
+where l.copieVendute > 10
+
+2.
+select distinct l.titolo
+from libro l
+where	l.titolo not in (select titolo from scritto) and
+		l.copieVendute > 0
+
+3.
+select distinct a.codice, a.cognome
+from autore a
+where a.codice not in (select codice
+					   from autore join scritto s on codice = s.codicea
+					   		join libro l on s.titolo = l.titolo
+					   where l.copieVendute > 10
+					  )
+
+4.
+select distinct a.codice , sum(l.copieVendute)
+from autore a join scritto s on a.codice = s.codicea
+		join libro l on s.titolo = l.titolo
+
+where a.eta > 30
+group by a.codice
+having count(s.titolo) >= 2
+
+5.
+select distinct codice, 0
+from autore
+where codice not in (select codicea from scritto)
+
+union 
+
+select distinct s.codicea, avg(l.copieVendute)
+from libro l join scritto s on l.titolo = s.titolo
+group by s.codicea
+
+6.
+select distinct l.titolo, count(a.codice) numAutori
+from autore a right join scritto s on (a.codice = s.codicea and a.eta > 40)
+		join libro l on l.titolo = s.titolo
+where l.copieVendute > 15
+group by l.titolo
+
+7.
+select distinct s.titolo
+from scritto s
+group by s.titolo
+having count(s.codicea) = 1
+
+8.
+select distinct a.codice, a.cognome, sum(l.copieVendute)
+from autore a join scritto s on a.codice = s.codicea
+		join libro l on s.titolo = l.titolo
+group by a.codice
+having sum(l.copieVendute) = (select max(v.somma)
+							  from(	select a1.codice, sum(l1.copieVendute) somma
+									from autore a1 join scritto s1 on a1.codice = s1.codicea
+										join libro l1 on s1.titolo = l1.titolo
+									group by a1.codice
+							  	   ) v
+							  )
+
+9.
+select distinct s.titolo
+from scritto s
+where s.codicea in (select distinct s.codicea
+					from libro l join scritto s on l.titolo = s.titolo
+					where l.copieVendute > 10
+					group by s.codicea
+					having count(s.titolo) >= 2
+					)
+
+10.
+select distinct a.codice, a.cognome
+from autore a join scritto s on a.codice = s.codicea
+where 	s.codicea in   (select distinct s.codicea
+						from libro l join scritto s on l.titolo = s.titolo
+						where l.copieVendute > 10
+						group by s.codicea
+						having count(s.titolo) >= 2
+						) and
+		s.titolo not in   (select distinct titolo
+							from scritto
+							group by titolo
+							having count(codicea) = 1
+					   		)
