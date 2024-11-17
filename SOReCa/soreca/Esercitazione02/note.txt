@@ -1,0 +1,10 @@
+Es1:
+In producer-consumer lui fa
+1:1 --> mette solo i due conting semaphore senza il mutex (3° semaforo), va bene lo stesso?
+		poi mette un while(1){sem_post();} , a cosa serve?
+1:M --> mette il 3° semaforo solo per il consumer (sono M)
+N:1 --> mette il 3° semaforo solo per il producer (sono N)
+N:M --> mette 3° e 4° semaforo uno per producer e uno per consumer
+
+Es2:
+non funziona ./server

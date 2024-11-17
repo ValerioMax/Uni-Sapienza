@@ -1,0 +1,5 @@
+-non ho capito bene cosa devo fare nell'esercizio 3
+
+-E' uguale definire il semaforo come variabile globale oppure definirlo dinamicamente (con malloc) localmente e poi passarlo
+	come argomento (nella struct degli argomenti) a tutti i thread? 
+	[a rigor di logica si, ma cosa cambia?]
