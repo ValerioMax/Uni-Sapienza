@@ -12,12 +12,11 @@ where	l.titolo not in (select titolo from scritto) and
 
 3.
 select distinct a.codice, a.cognome
-from autore a
-where a.codice not in (select codice
-					   from autore join scritto s on codice = s.codicea
-					   		join libro l on s.titolo = l.titolo
+from autore a 
+where a.codice not in (select s.codicea
+					   from libro l join scritto s on l.titolo = s.titolo
 					   where l.copieVendute > 10
-					  )
+					  ) 
 
 4.
 select distinct a.codice , sum(l.copieVendute)

@@ -1,0 +1,63 @@
+1.
+select distinct b.codice, b.nome
+from bambino b join richiesta r on b.codice = r.codiceb
+where citta <> 'Milano' and r.preferenza >= 4
+
+2.
+select distinct b.codice
+from bambino b join richiesta r1 on b.codice = r1.codiceb
+		join richiesta r2 on b.codice = r2.codiceb
+		join giocattolo g1 on r1.codiceg = g1.codice
+		join giocattolo g2 on r2.codiceg = g2.codice
+where r1.preferenza = r2.preferenza and
+		g1.categoria <> g2.categoria
+		
+-- oppure --
+
+select distinct b.codice
+from bambino b, richiesta r1, richiesta r2, giocattolo g1, giocattolo g2
+where	b.codice = r1.codiceb and b.codice = r2.codiceb and
+		r1.codiceg = g1.codice and r2.codiceg = g2.codice and
+		r1.preferenza = r2.preferenza and
+		g1.categoria <> g2.categoria
+
+3.
+select distinct b.codice, b.citta, count(r.preferenza)
+from bambino b join richiesta r on b.codice = r.codiceb
+where r.preferenza = 1
+group by b.codice
+
+union
+
+select distinct b.codice, b.citta, 0
+from bambino b join richiesta r on b.codice = r.codiceb
+where b.codice not in (select codiceb
+					   from richiesta
+					   where preferenza = 1
+					  )
+
+
+4.
+select distinct b.codice, g.codice, max(r.preferenza)
+from bambino b join richiesta r on b.codice = r.codiceb
+		join giocattolo g on r.codiceg = g.codice
+group by b.codice, g.codice
+
+union
+
+select b.codice, g.codice, 0
+from bambino b, giocattolo g
+where b.codice not in (select codiceb from richiesta where codiceg = g.codice)
+
+5.(sbagliata)
+select distinct r1.codiceg, avg(r1.preferenza)
+from
+	(select distinct r.codiceg
+	from bambino b left join richiesta r on b.codice = r.codiceb
+	except
+	select distinct r.codiceg
+	from bambino b left join richiesta r on b.codice = r.codiceb
+	where b.citta = 'Firenze') v left join richiesta r1 on v.codiceg = r1.codiceg
+
+group by r1.codiceg
+order by r1.codiceg
