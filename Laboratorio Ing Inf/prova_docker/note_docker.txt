@@ -1,0 +1,60 @@
+NOTE su Docker:
+
+Con il Dockerfile si configura una immagine Docker:
+- si setta l'immagine di partenza
+- si aggiungono librerie installandocele sopra
+- si copiano dentro i file del nostro progetto
+    - si può fare COPY . . e poi mettere in .dockerignore quelli che
+        non si vuole vengano copiati
+- si dice su quale porta DEL DOCKER CONTAINER (quando verrà eseguito un container)
+    sarà accessibile dall'esterno
+- si specifica il comando che verrà lanciato quando si lancerà il container
+
+Per creare l'immagine una volta fatto il Dockerfile:
+    docker build -t nome_immagine:tag .
+tag es: 1.0
+. indica dove si trova il contesto di build: cartella contenente tutti i file/dockerignore
+accessibili al builder dell'immagine quando la builderà a partire dal Dockerfile
+(questi sono i file accessibili, poi nell'immagine verranno copiati solo i file specificati con COPY)
+
+Un'immagine è un file system statico e un set di istruzioni che definiscono
+un environment per eseguire un'applicazione
+L'immagine può essere eseguita (attraverso Docker) su OS diversi assicurando la compatibilità!
+(senza che programma funzioni su una macchina ma su un'altra no)
+
+A partire dall'immagine si possono creare e avviare Container (istanze dell'immagine)
+(ognuno deve avere nome diverso)
+    docker run -p 8007:8000 --name nome_container nome_immagine:tag
+Con questo comando stiamo eseguendo l'istanza dell'immagine (il Container nome_container)
+
+NOTA:
+Un container è come un processo:
+    - è fatto da una memoria che sta sul disco
+    - può morire (essere rimosso) : viene bloccato e eliminato proprio dal disco
+    - oppure fermarsi (essere stoppato) : continua a esistere nel disco ma si blocca allo stato in configura    
+                                            stava quando è stato stoppato (freezzato) (come unprocesso in ready state)
+
+Per creare e avviare l'esecuzione di un container
+    docker run -p porta_pc:porta_container --name nome_container nome_immagine_di_partenza:tag
+
+Per bloccare l'esecuzione di un container
+    docker stop nome_container
+
+Per riprendere l'esecuzione di un container bloccato
+    docker start nome_container
+
+Per terminare l'esecuzione di un container
+    docker rm -f nome_container
+
+Per rimuovere immagine
+    docker rmi nome_immagine:tag
+(metti latest come tag (?))
+
+Per visualizzare la lista di immagini che si ha
+    docker images
+
+Per visualizzare la lista di container attivi che si ha
+    docker ps
+
+Per visualizzare la lista di tutti i container che si ha (stoppati o in esecuzione)
+    docker ps -a

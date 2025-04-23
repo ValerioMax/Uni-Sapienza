@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Store | Home</title>
+</head>
+<body>
+    {% if items %}
+        <h1>Benvenuto stronzo</h1>
+        <ul>
+            {% for item in items %}
+                <li>
+                    <p>{{ item["name"] }} -> qt: {{ item["quantity"] }}, price: ${{ item["price"] }}</p>
+                </li>
+            {% else %}
+                <li>Nessun prodotto disponibile</li>
+            {% endfor %}
+        </ul>
+
+        <h1>Inserisci credenziali e nome articolo che vuoi comprà:</h1>
+        <form action="/buy" method="POST">
+            <label for="id1">Username: </label>
+            <input type="text" id="id1" name="username" required><br>
+
+            <label for="id2">Password: </label>
+            <input type="password" id="id2" name="password" required><br>
+            
+            <label for="id3">Item Name: </label>
+            <input type="text" id="id3" name="item_name" required><br>
+            
+            <label for="id4">Quantity: </label>
+            <input type="text" id="id4" name="quantity" required><br>
+
+            <button type="submit">Buy</button><br><br>
+        </form>
+    {% endif %}
+
+    {% if esito %}
+        <p>Esito: {{ esito["success"] }}</p><br>
+        <p>Message: {{ esito["message"] }}</p><br>
+
+        <a href="/">torna alla home</a>
+    {% endif %}
+</body>
+</html>
