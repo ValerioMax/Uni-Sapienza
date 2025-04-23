@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Number Guessing Game</title>
+</head>
+<body>
+    <h1>Number Guessing Game for {{ player_name }}</h1>
+    {% if error %}
+      <p style="color:red;">Error: {{ error }}</p>
+    {% endif %}
+    {% if message %}
+      <p>{{ message }}</p>
+    {% endif %}
+    {% if finished %}
+      <p>Congratulations! You guessed the number correctly.</p>
+      <p>The target number was {{ target }}.</p>
+      <p>You made {{ attempts|length }} attempts.</p>
+      <a href="/">Play Again</a>
+    {% else %}
+      <form action="/guess" method="post">
+          <input type="hidden" name="player_name" value="{{ player_name }}">
+          <label for="guess">Enter your guess:</label>
+          <input type="number" name="guess" required>
+          <button type="submit">Guess</button>
+      </form>
+    {% endif %}
+    {% if attempts %}
+      <h2>Attempts so far:</h2>
+      <ul>
+        {% for attempt in attempts %}
+          <li>{{ attempt }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+</body>
+</html>

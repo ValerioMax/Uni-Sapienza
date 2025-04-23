@@ -131,24 +131,6 @@ void mprocServer(int server_desc) {
 
         if (DEBUG) fprintf(stderr, "Incoming connection accepted...\n");
 
-        /** SOLUTION
-         *
-         * Suggestions:
-         * - use fork() to create a child process to handle the request
-         * - close descriptors that are not used in the parent and the
-         *   child process: note that a connection is closed only when
-         *   all the descriptors associated with it have been closed!
-         * - connection_handler(client_desc, client_addr) should be
-         *   executed by the child process to handle the request
-         * - memset(client_addr, 0, sizeof(struct sockaddr_in)) should
-         *   be performed in order to be able to accept a new request
-         * - free memory where needed
-         * - add a debug message in the parent process to inform the
-         *   user that a child process has been created
-         * - add a debug message in the child process to inform the
-         *   user that the request has been handled
-         **/
-
         pid_t pid = fork();
         if (pid < 0) handle_error("Cannot fork server process to handle the request");
         else if (pid == 0) {

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  logic:
+    build:
+      context: .
+      dockerfile: docker_logic/Dockerfile
+    ports:
+      - "8000:8000"        # logic server on 8000 inside and outside
+
+  html:
+    build:
+      context: .
+      dockerfile: docker_html/Dockerfile
+    ports:
+      - "8001:8001"        # html server on 8001 inside and outside
+    environment:
+      - LOGIC_API_URL=http://logic:8000
+    depends_on:
+      - logic
