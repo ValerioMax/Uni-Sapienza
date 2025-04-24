@@ -14,9 +14,12 @@ Stiamo eseguendo l'app (*) "main.py" nel container docker "prova_container1"
 (*): app costituita da tutti i file che ho messo nel container 
         --> lettermente copio tutto il progetto nel container
 
-Per visualizzare response apriamo browser su
+Per visualizzare response:  
+- apriamo browser su
     http://localhost:8007/
 (inviamo request a localhost:8007)
 
-Possiamo anche runnare client.py che invia la request da codice python con FastAPI
+-- oppure --
+
+- Possiamo anche runnare client.py che invia la request da codice python con FastAPI
     python3 client.py

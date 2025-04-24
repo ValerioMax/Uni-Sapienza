@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  service_a:
+    build: ./service_a
+    ports:
+      - "8000:8000"
+    container_name: service_a
+  
+  service_b:
+    build: ./service_b
+    ports:
+      - "8001:8001"
+    container_name: service_b
+    depends_on:
+      - service_a
+  

@@ -27,6 +27,9 @@ A partire dall'immagine si possono creare e avviare Container (istanze dell'imma
     docker run -p 8007:8000 --name nome_container nome_immagine:tag
 Con questo comando stiamo eseguendo l'istanza dell'immagine (il Container nome_container)
 
+-p 8001:8000 fa PORT FORWARDING: collega la porta esterna 8001 a quella interna del container 8000
+(si possono usare anche lo stesso numero di porta tanto sono diverse)
+
 NOTA:
 Un container è come un processo:
     - è fatto da una memoria che sta sul disco
