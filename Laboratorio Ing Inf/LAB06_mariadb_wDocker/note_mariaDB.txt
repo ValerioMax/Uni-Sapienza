@@ -1,0 +1,120 @@
+Docker Volumes:
+
+Quando un container docker termina la sua esecuzione o viene eliminato
+tutti i dati che conteneva vengono persi.
+--> E' negativo se nel container si vuole mettere un database.
+
+In generale se si aggiunge al comando docker run la flag
+    --volume percorso1:percorso2
+(--volume o -v)
+
+percorso1 = percorso_sulla_host_machine
+percorso2 = percorso_nel_container
+
+si può far si che i dati del container docker vengano salvati nella cartella
+localizzata al percorso1 nella nostra macchina
+--> in questo modo quando il container termina i suoi dati rimangono nel cartella sulla nostra macchina
+--> se si ricrea il container on un container nuovo con la flag --volume questo riotterrà i dati salvati
+
+L'applicazione dentro al container lavorerà andando a leggere/scrivere dati sul percorso2
+Questo percorso è mappato all'esterno del container al percorso1
+Quindi in sostanza il container legge e scrive su percorso1
+
+NOTA:
+si possono montare dati in un container in due modi
+- Bind Mount:
+    Caricare una specifica cartella nel container
+        --volume percorso_dove_ho_la_cartella_da_caricare:percorso2
+
+- Volumes:
+    Caricare un volume docker (cartella di dati gestita da docker) nel container
+        docker volume create nome_volume
+        --volume nome_volume:percorso2
+_________________________________________________________________________________
+
+MariaDB Setup in Docker:
+
+Vogliamo fare un Bind Mount di una cartella su un container
+Creiamo la cartella mariadb_data/ in /home/valerio/
+
+Diamo i permessi a docker di scrivere nella cartella
+    chmod 0777 /home/valerio/mariadb_data/
+
+Creare container di nome "prova-mariadb" sulla base dell'immagine "mariadb:11.7.2-ubi9" già presente in docker
+    docker run --name prova-mariadb \
+        -e MYSQL_ROOT_PASSWORD=rootpassword \
+        -e MYSQL_DATABASE=toy_store \
+        -p 3307:3306 \
+        --volume /home/valerio/mariadb_data/:/var/lib/mysql:Z \
+        -d mariadb:11.7.2-ubi9
+
+-e MYSQL_ROOT_PASSWORD=rootpassword
+crea variabile d'ambiente MYSQL_ROOT_PASSWORD nel container e la setta a "rootpassword"
+
+OPZIONALE farlo ora:
+-e MYSQL_DATABASE=toy_store
+crea variabile d'ambiente MYSQL_DATABASE nel container e la setta a "toy_store"
+
+-p 3307:3306
+fa port-forwarding fra host machine (esterno) e container (interno)
+fra la porta esterna 3307 e quella interna 3306
+
+--volume /home/riccardo/mariadb_data/:/var/lib/mysql:Z
+monta il volume che si trova al percorso nella host machine /home/valerio/mariadb_data/
+sul percorso del container /var/lib/mysql
+(collega i due percorsi in modo che container quando deve lavorare sul percorso interno viene reindirizzato su quello esterno)
+[Crea in automatico un volume docker detto "mariadb_data" al persorso /home/valerio/mariadb_data/]
+
+:Z indica a Docker di etichettare la dir in modo che possa essere condivisa in modo sicuro fra host e container
+    (abilita i permessi per accederci)
+
+--name prova-mariadb
+-d mariadb:11.7.2-ubi9
+nomina il container "prova-mariadb" e lo crea sulla base dell'immagine mariadb:11.7.2-ubi9
+
+
+
+
+Controlliamo se il container è avviato e attivo
+    docker ps
+
+
+
+
+Ora usiamo il programma di MariaDB sulla nostra host-machine come client che chiedere cose
+al server (mariaDB nel container) nel container
+(come client.py che runna dalla host machine e fa request al main.py nel docker container)
+    sudo apt install mariadb-client
+
+Per fare request al server (interrogare il server nel docker che contiene il DB)
+dobbiamo collegarci al DB in esso tramite programma client che può farlo:
+    mariadb -h 127.0.0.1 -P 3307 -u root -p
+
+Inseriamo la password "rootpassword" e interagiamo col DB nel container
+
+Entrati col root user creiamo un database (se non l'abbiamo fatto col comando docker run)
+    CREATE DATABASE mio_database;
+
+Creaimo nuovo user "pippo" con password "1234"
+    CREATE USER 'pippo'@'localhost' IDENTIFIED BY '1234';
+
+Diamogli i privilegi di accedere e scrivere a questo database
+    GRANT ALL PRIVILEGES ON mio_database.* TO 'pippo'@'%' IDENTIFIED BY '1234';
+    FLUSH PRIVILEGES;
+
+(% indica che da privilegi allo user pippo da qualsiasi IP esso acceda)
+
+Usciamo con CTRL-D
+A questo punto possiamo accedere con pippo con
+    mariadb -h 127.0.0.1 -P 3307 -u pippo -p
+
+E usare i comandi di SQL
+
+
+
+NOTA !!!:
+Potrei interagire col mariadb dentro al container senza aver installato mariadb sulla host machine usando
+    docker exec -it prova-mariadb mariadb -uroot -prootpassword mio_database
+    
+con -t docker alloca un terminale che mi fa usare mariadb anche da fuori il container
+Inoltre in questo modo non ho bisogno di fare port-forwarding di alcuna porta del docker container quando faccio docker run
