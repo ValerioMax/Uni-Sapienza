@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+requests
+jinja2
+
+# non so se andrebbe usato ma così funziona
+python-multipart

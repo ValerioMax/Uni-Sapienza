@@ -1,0 +1,41 @@
+<h1>Esonero Laboratorio</h1>
+
+<form action="/query" method="GET">
+    <label for="query_input">Send natural language query:</label>
+    <input type="text" id="query_input" name="query_input">
+
+    <button type="submit">Submit</button><br>
+</form>
+
+{% if query_output %}
+    Query output: {{ query_output }}
+{% endif %}
+
+{% if error %}
+    Errore: {{ error }}
+{% endif %}
+
+<a href="/schema">get DB Schema summary</a><br>
+
+{% if schema %}
+    Schema summary: {{ schema }}
+{% endif %}
+
+{% if error %}
+    Errore: {{ error }}
+{% endif %}
+
+
+<form action="/add_data" method="POST">
+    <label for="add_data_input">Add a row into the DB:</label>
+    <input type="text" id="add_data_input" name="data">
+
+    <button type="submit">Submit</button><br>
+</form>
+
+{% if esito %}
+    <p>Esito: {{ esito["success"] }}</p><br>
+    <p>Message: {{ esito["message"] }}</p><br>
+
+    <a href="/">torna alla home</a>
+{% endif %}
