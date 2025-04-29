@@ -21,3 +21,5 @@
 - gestione errori ( input invalidi -> 422 (unprocessable entity (stringa in formato sbagliato)),
                     
                     )
+
+- metti GRANT all permissions... per l utente non root nel DB
