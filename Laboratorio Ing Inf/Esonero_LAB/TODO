@@ -4,9 +4,20 @@
 - Fixare il fatto che non si vedono piu di un risultato di un bottone alla volta (perche sono in context diversi e index.html ne trova uno alla volta)
 
 - Devo ritornare TUTTE le colonne in ogni query (select *)? perche in alcune chiede selezione i titoli (devo fare select titolo oppure select * ?)
+--> NON CREDO
 
 - data_line è l'input della funzione add() oppure il campo della classe Pydantic?
 
 - add() deve gestire anche inserimenti parziali di tuple come ("film1", "regista1", 54) (solo tre campi) ?
 
 - Gestisci UPDATE in caso di cambio di campi per un regista (es eta) -> vedi slide 22
+
+- I permessi chmod 0777 darli dal docker file e non metterli a mano perche il prof non li avrà ovviamente
+
+- Fare una tabella per i film e una per i registi
+
+- metti healthcheck nel docketcompose.yml (vedi se metterli o no)
+
+- gestione errori ( input invalidi -> 422 (unprocessable entity (stringa in formato sbagliato)),
+                    
+                    )

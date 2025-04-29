@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
 import requests
@@ -19,7 +20,7 @@ def get_query_output(request: Request):
     query = request.query_params.get("query_input")
     if query:
         try:
-            response = requests.get(f"{API_BASE_URL}/search/{query}")
+            response = requests.get(f"{API_BASE_URL}/search/{quote(query)}")
             response.raise_for_status()
             data = response.json()
             context = {"request": request, "query_output": data}
