@@ -1,0 +1,20 @@
+<h1>Query output</h1>
+
+{% if query_output %}
+    {% for item in query_output %}
+        {% for property in item["properties"] %}
+            {{ property["property_value"] }} |
+        {% endfor %}<br>
+    {% endfor %}
+
+    <h3>Raw Data</h3>
+    Query output: {{ query_output }}
+{% endif %}
+
+{% if error %}
+    Errore {{ error }}: {{ error_detail }}
+{% endif %}
+
+<br><br>
+
+<a href="/">Torna alla home</a>

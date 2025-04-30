@@ -23,3 +23,10 @@
                     )
 
 - metti GRANT all permissions... per l utente non root nel DB
+
+- se metto nel docker-compose image: mariadb:11.7.2-ubi9 non funzionano gli heatlth check ma non crea i file nella cartella mariadb_data la prima volta che buildi (li crea solo se si fa chmod 0777 alla cartella mariadb_data)
+    se metto image: mariadb:latest non vanno gli healthcheck ma crea il db anche senza dare i permessi con chmod 0777
+
+- metti commenti con triplici apici python """ """ e commenti nel codice html ecc
+
+- fai script che parsa il file data.tsv e butta tutto nel DB

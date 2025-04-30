@@ -1,0 +1,20 @@
+<h1>Schema summary</h1>
+
+<h3>Tabella | Colonna</h3>
+
+{% if schema %}
+    {% for column in schema %}
+        {{ column["table_name"] }} | {{ column["table_column"] }}<br>
+    {% endfor %}
+
+    <h3>Raw Data</h3>
+    Schema summary: {{ schema }}
+{% endif %}
+
+{% if error %}
+    Errore: {{ error }}
+{% endif %}
+
+<br><br>
+
+<a href="/">Torna alla home</a>

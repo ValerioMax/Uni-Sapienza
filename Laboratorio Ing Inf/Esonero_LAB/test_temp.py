@@ -149,6 +149,14 @@ Quali registi hanno fatto più di un film?"""
         print("Testing: Question 5 - Directors with Multiple Films...")
         question = self.questions[4]
         returned_directors = self._run_search_and_extract(question, "director")
+        if returned_directors == expected_directors:
+            print("SONO UGUALI\n")
+        for dir in returned_directors:
+            if dir not in expected_directors:
+                print(dir, " NON C'E'\n")
+            else:
+                print(dir, " C'E'\n")
+
         assert returned_directors == expected_directors, (
             f"FAIL: For question: '{question}', expected directors {expected_directors} but got {returned_directors}"
         )

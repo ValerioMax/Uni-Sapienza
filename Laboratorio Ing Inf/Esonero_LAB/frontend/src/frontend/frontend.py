@@ -25,10 +25,11 @@ def get_query_output(request: Request):
             data = response.json()
             context = {"request": request, "query_output": data}
         except requests.RequestException as e:
-            context = {"request": request, "error": "errore bro!"}
+            error_detail = e.response.json().get("detail")
+            context = {"request": request, "error": response.status_code, "error_detail": error_detail}
     else:
-        context = {"request": request, "error": "No query provided vro!"}
-    return templates.TemplateResponse("index.html", context)
+        context = {"request": request, "error": "Inserisci una query!"}
+    return templates.TemplateResponse("query_output.html", context)
 
 @app.get("/schema")
 def get_schema_summary(request: Request):
@@ -38,22 +39,23 @@ def get_schema_summary(request: Request):
         data = response.json()
         context = {"request": request, "schema": data}
     except requests.RequestException as e:
-        context = {"request": request, "error": "errore bro!"}
-    return templates.TemplateResponse("index.html", context)
+        context = {"request": request, "error": response.status_code, "error_detail": "errore"}
+    return templates.TemplateResponse("schema_summary.html", context)
 
 @app.post("/add_data")
-def add_data(request: Request, data: str = Form(default=...)):
-    payload = {"data_line": data}
-
-    try:
-        response = requests.post(f"{API_BASE_URL}/add", json=payload)
-        response.raise_for_status()
-        data = response.json()
-    except requests.RequestException as e:
-        data = None
-        print("Errore nella chiamata a API: ", e)
-
-    context = {"request": request, "esito": data}
+def add_data(request: Request, data_line: str = Form(default=...)):
+    payload = {"data_line": data_line}
+    if payload:
+        try:
+            response = requests.post(f"{API_BASE_URL}/add", json=payload)
+            response.raise_for_status()
+            data = response.json()
+            context = {"request": request, "status": data.get("status"), "data_line": data_line}
+        except requests.RequestException as e:
+            error_detail = e.response.json().get("detail")
+            context = {"request": request, "error": response.status_code, "error_detail": error_detail}
+    else:
+        context = {"request": request, "error": "Inserisci una riga da inserire nel database!"}
     return templates.TemplateResponse("index.html", context)
 
 #if __name__ == "__main__":

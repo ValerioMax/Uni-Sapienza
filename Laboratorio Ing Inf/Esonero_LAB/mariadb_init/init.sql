@@ -15,9 +15,9 @@ CREATE TABLE movies (
 );
 
 INSERT INTO movies (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) VALUES
-('Inception', 'Christofer Nolan', 54, 2010, 'Fantascienza', 'Amazon Prime Video', 'NOW'),
+('Inception', 'Christopher Nolan', 54, 2010, 'Fantascienza', 'Amazon Prime Video', 'NOW'),
 ('Parasite', 'Bong Joon-ho', 55, 2019, 'Dramma', 'Netflix', ''),
-('Interstellar', 'Christofer Nolan', 54, 2014, 'Fantascienza', 'Paramount+', 'Amazon Prime Video'),
+('Interstellar', 'Christopher Nolan', 54, 2014, 'Fantascienza', 'Paramount+', 'Amazon Prime Video'),
 ('The Dark Knight', 'Christopher Nolan', 54, 2008, 'Azione', 'Netflix', ''),
 ('Fight Club', 'David Fincher', 62, 1999, 'Dramma', '', ''),
 ('Seven', 'David Fincher', 62, 1995, 'Crime', 'Netflix', ''),

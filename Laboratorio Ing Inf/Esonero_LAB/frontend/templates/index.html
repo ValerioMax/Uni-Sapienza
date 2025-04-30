@@ -12,10 +12,10 @@
 {% endif %}
 
 {% if error %}
-    Errore: {{ error }}
+    Errore {{ error }}: {{ error_detail }}
 {% endif %}
 
-<a href="/schema">get DB Schema summary</a><br>
+<a href="/schema">get DB Schema summary</a><br><br>
 
 {% if schema %}
     Schema summary: {{ schema }}
@@ -28,14 +28,16 @@
 
 <form action="/add_data" method="POST">
     <label for="add_data_input">Add a row into the DB:</label>
-    <input type="text" id="add_data_input" name="data">
+    <input type="text" id="add_data_input" name="data_line">
 
     <button type="submit">Submit</button><br>
 </form>
 
-{% if esito %}
-    <p>Esito: {{ esito["success"] }}</p><br>
-    <p>Message: {{ esito["message"] }}</p><br>
-
-    <a href="/">torna alla home</a>
+{% if status and status == "ok" %}
+    Inserita linea ({{ data_line }}) con successo!
 {% endif %}
+
+{% if error %}
+    Errore {{ error }}: {{ error_detail }}
+{% endif %}
+

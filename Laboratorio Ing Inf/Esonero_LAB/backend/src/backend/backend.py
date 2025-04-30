@@ -1,17 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
+from typing import List, Dict
+from .utils.utils import *
 import mariadb
 
-from typing import List, Dict, Optional
-
-app = FastAPI(title="E-Store API")
-
-queries_dict: Dict[str, str] = {
-    "Quali sono i registi presenti su Netflix?": "SELECT regista FROM movies WHERE piattaforma_1 = 'Netflix' OR piattaforma_2 = 'Netflix'",
-    "Elenca tutti i film di fantascienza.": "SELECT titolo FROM movies WHERE genere = 'Fantascienza'",
-    "Quali registi hanno fatto più di un film?": "SELECT regista FROM movies GROUP BY regista HAVING COUNT(*) > 1"
-}
+app = FastAPI()
 
 class Property(BaseModel):
     property_name: str
@@ -29,122 +22,48 @@ class AddRowRequest(BaseModel):
     data_line: str
 
 class AddRowResponse(BaseModel):
-    success: bool
-    message: str
+    status: str
 
-def connect_to_db():
-    # TODO: usare variabili d'ambiente del docker da cui si estrae lo user e la password con os. ... (come fa Luca)
-    conn = mariadb.connect(
-        host="db",
-        port=3306,
-        user="root",
-        password="pass123",
-        database="esonero_db"
-    )
-    return conn
-
-# per item type mettere stringa "film" e film "director"
-
-def convert_to_sql(natural_lang_query: str) -> str:
-    words = natural_lang_query.split(" ")
-    if words[0] == "Elenca" and words[1] == "i": # TODO se uno cerca "Elenca i cazzi nel culo" entra lo stesso (usa una regex)
-        anno = words[4].strip(".")
-        print(anno, type(anno), "\n\n\n\n")
-        sql_query = f"SELECT titolo FROM movies WHERE anno = {anno}"
-    elif words[0] == "Quali" and words[1] == "film": # TODO se uno cerca "Quali film cazzi nel culo" entra lo stesso
-        anni = words[10]
-        sql_query = f"SELECT titolo FROM movies WHERE eta_autore >= {anni}" 
-    else:
-        sql_query = queries_dict[natural_lang_query]
-    print("YOOOOOOOOOOO", natural_lang_query)
-    return sql_query
-
-def execute_query(connection: mariadb.Connection, query: str):
-    cursor: mariadb.Cursor = connection.cursor()
-    cursor.execute(query)
-
-    results = cursor.fetchall()
-    
-    column_names = [column[0] for column in cursor.description]
-
-    connection.commit()
-
-    cursor.close()
-    return (results, column_names)
-
-# input: stringa che contiene una domanda in natural language
-# output: risultato esecuzione query in json
 @app.get("/search/{natural_lang_query}")
 def get_search(natural_lang_query) -> List[Item]:
     conn = connect_to_db()
 
     sql_query = convert_to_sql(natural_lang_query)
-    results, column_names = execute_query(conn, sql_query)
-    print("RISULTATIIIIIIIIIIII:", results, '\n\n')
+    if not sql_query:
+        conn.close()
+        raise HTTPException(status_code=422, detail="Formato query in linguaggio naturale invalido")
+
+    query_results, column_names = execute_query(conn, sql_query)
+    print("RISULTATI QUERY: ", query_results, '\n\n', column_names,'\n\n')
 
     conn.close()
-    """
-    movies: List[Item] = []
-    for result in results:
+
+    """ Assumendo che vogliamo un item_type diverso dal nome della colonna dove si trova (es: 'director' invece che 'regista') """
+    item_type = get_query_item_type(column_names)
+
+    search_results: List[Item] = []
+    for result in query_results:
         properties: List[Property] = []
-        for property, name in zip(result, column_names):
+        for index, column_name in enumerate(column_names):
             properties.append(
                 Property(
-                    property_name=name, # TODO senza virgolette?????
-                    property_value=str(property)
+                    property_name="name",
+                    property_value=str(result[index])
                 )
             )
-            print("NOMEEEEEE:", name, '\n\n')
-        if properties[0].property_name == "titolo":
-            movies.append(
+        search_results.append(
                 Item(
-                    item_type="film",
+                    item_type=item_type,
                     properties=properties
                 )
             )
-        elif properties[0].property_name == "regista":
-            movies.append(
-                Item(
-                    item_type="director",
-                    properties=properties
-                )
-            )
-    """
-    # property = get_property(query) # prende la 
-    movies: List[Item] = []
-    for result in results:
-        properties: List[Property] = [
-            Property(
-                property_name="name", # TODO senza virgolette?????
-                property_value=str(result[0])
-            )
-        ]
-        if column_names[0] == "titolo":
-            movies.append(
-                Item(
-                    item_type="film",
-                    properties=properties
-                )
-            )
-        elif column_names[0] == "regista":
-            movies.append(
-                Item(
-                    item_type="director",
-                    properties=properties
-                )
-            )
-        
-    
+    return search_results
 
-    return movies
-
-# input: nulla
-# output: schema del database in json
 @app.get("/schema_summary")
 def get_schema_summary() -> List[TableColumn]:
     conn = connect_to_db()
 
-    sql_tables_query = f"SELECT table_name FROM information_schema.tables WHERE table_schema = 'esonero_db'"
+    sql_tables_query = f"SELECT table_name FROM information_schema.tables WHERE table_schema = '{NOME_DATABASE}'"
     
     results, _ = execute_query(conn, sql_tables_query)
     table_names = [row[0] for row in results]
@@ -164,25 +83,29 @@ def get_schema_summary() -> List[TableColumn]:
             )
     return schema
 
-
-# input: data_line --> una tupla da inserire nel DB (una linea di dati separata da virgole)
-# output: conferma dell'aggiunta nel DB
-# Implementare gestione errori di formattazione 
 @app.post("/add")
 def add(data_line_request: AddRowRequest) -> AddRowResponse:
     data_line = data_line_request.data_line
 
+    if not check_data_line_format(data_line):
+        raise HTTPException(status_code=422, detail="Formato riga da inserire invalido")
+    
     conn = connect_to_db()
     cursor = conn.cursor()
 
     table_name = "movies"
-    data_to_insert = tuple(data_line.strip().split(","))
+    #data_to_insert = tuple(data_line.split(","))
+    data_to_insert = data_line.split(",")
+    for i in range(len(data_to_insert)):
+        data_to_insert[i] = data_to_insert[i].strip()
+    data_to_insert = tuple(data_to_insert)
     print(data_to_insert, '\n')
     #data_to_insert = ('a', 'b', 1, 2, 'c', 'd', 'e')
     #data_to_insert = ('a', 'b')
     #sql_command = f"INSERT INTO {table_name} ({col1}, {col2}, {col3}) VALUES ({val1}, {val2}, {val3})"
     #sql_command = f"INSERT INTO {table_name} VALUES ({val1}, {val2}, {val3})"
-    sql_command = f"INSERT INTO {table_name} (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+    sql_command = f"INSERT INTO {table_name} (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) " \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
     
     cursor.execute(sql_command, data_to_insert)
 
@@ -192,8 +115,7 @@ def add(data_line_request: AddRowRequest) -> AddRowResponse:
     conn.close()
 
     return AddRowResponse(
-        success=True,
-        message=f"Dajeroma dajee"
+        status="ok"
     )
 
 #if __name__ == "__main__":
