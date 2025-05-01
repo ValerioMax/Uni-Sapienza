@@ -30,3 +30,9 @@
 - metti commenti con triplici apici python """ """ e commenti nel codice html ecc
 
 - fai script che parsa il file data.tsv e butta tutto nel DB
+
+- FAI UPDATE delle righe del database!!!!!!!!!!!!!!!!!!!!!!!
+
+- metti titolo come primary key!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+- forse fare una tabella sola se no come si implementa l'inserimento di una nuova riga? bisognerebbe specificare la tabella dove la si mette
