@@ -1,11 +1,13 @@
 from urllib.parse import quote
 from fastapi import FastAPI, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import requests
 
 app = FastAPI()
 #templates = Jinja2Templates(directory="../../templates") # "../../templates" percorso runnando questo programma da dentro la cartella server/
 templates = Jinja2Templates(directory="./templates")
+app.mount("/styles", StaticFiles(directory="./styles"), name="styles")
 
 # URL del server a cui connettersi
 API_BASE_URL = "http://backend:8003"
@@ -50,14 +52,10 @@ def add_data(request: Request, data_line: str = Form(default=...)):
             response = requests.post(f"{API_BASE_URL}/add", json=payload)
             response.raise_for_status()
             data = response.json()
-            context = {"request": request, "status": data.get("status"), "data_line": data_line}
+            context = {"request": request, "data": data, "data_line": data_line}
         except requests.RequestException as e:
             error_detail = e.response.json().get("detail")
             context = {"request": request, "error": response.status_code, "error_detail": error_detail}
     else:
         context = {"request": request, "error": "Inserisci una riga da inserire nel database!"}
-    return templates.TemplateResponse("index.html", context)
-
-#if __name__ == "__main__":
-#    import uvicorn
-#    uvicorn.run(app, host="127.0.0.1", port=8007)
+    return templates.TemplateResponse("row_insert.html", context)

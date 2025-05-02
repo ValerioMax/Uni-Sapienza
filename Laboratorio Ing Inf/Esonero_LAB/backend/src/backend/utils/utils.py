@@ -39,19 +39,6 @@ def convert_to_sql(natural_lang_query: str) -> str:
     sql_query = static_queries_dict.get(natural_lang_query)
     return sql_query
 
-
-    words = natural_lang_query.split(" ")
-    if words[0] == "Elenca" and words[1] == "i": # TODO se uno cerca "Elenca i cazzi nel culo" entra lo stesso (usa una regex)
-        anno = words[4].strip(".")
-        print(anno, type(anno), "\n")
-        sql_query = f"SELECT titolo FROM movies WHERE anno = {anno}"
-    elif words[0] == "Quali" and words[1] == "film": # TODO se uno cerca "Quali film cazzi nel culo" entra lo stesso
-        anni = words[10]
-        sql_query = f"SELECT titolo FROM movies WHERE eta_autore >= {anni}" 
-    else:
-        sql_query = queries_dict[natural_lang_query]
-    return sql_query
-
 def execute_query(connection: mariadb.Connection, query: str):
     cursor: mariadb.Cursor = connection.cursor()
     cursor.execute(query)
@@ -67,7 +54,6 @@ def execute_query(connection: mariadb.Connection, query: str):
 def get_query_item_type(column_names):
     if len(column_names) == 1:
         column_name = column_names[0]
-        print("debug: ", column_name, '\n')
         if column_name == "titolo":
             item_type = "film"
         elif column_name == "regista":

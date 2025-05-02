@@ -34,7 +34,6 @@ def get_search(natural_lang_query) -> List[Item]:
         raise HTTPException(status_code=422, detail="Formato query in linguaggio naturale invalido")
 
     query_results, column_names = execute_query(conn, sql_query)
-    print("RISULTATI QUERY: ", query_results, '\n\n', column_names,'\n\n')
 
     conn.close()
 
@@ -67,13 +66,11 @@ def get_schema_summary() -> List[TableColumn]:
     
     results, _ = execute_query(conn, sql_tables_query)
     table_names = [row[0] for row in results]
-    #print(table_names, '\n')
 
     schema: List[TableColumn] = []
     for table_name in table_names:
         sql_columns_query = f"SELECT * FROM {table_name} LIMIT 0"
         _, column_names = execute_query(conn, sql_columns_query)
-        #print(column_names, '\n')
         for column_name in column_names:
             schema.append(
                 TableColumn(
@@ -93,21 +90,29 @@ def add(data_line_request: AddRowRequest) -> AddRowResponse:
     conn = connect_to_db()
     cursor = conn.cursor()
 
-    table_name = "movies"
-    #data_to_insert = tuple(data_line.split(","))
     data_to_insert = data_line.split(",")
     for i in range(len(data_to_insert)):
         data_to_insert[i] = data_to_insert[i].strip()
     data_to_insert = tuple(data_to_insert)
-    print(data_to_insert, '\n')
-    #data_to_insert = ('a', 'b', 1, 2, 'c', 'd', 'e')
-    #data_to_insert = ('a', 'b')
-    #sql_command = f"INSERT INTO {table_name} ({col1}, {col2}, {col3}) VALUES ({val1}, {val2}, {val3})"
-    #sql_command = f"INSERT INTO {table_name} VALUES ({val1}, {val2}, {val3})"
-    sql_command = f"INSERT INTO {table_name} (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) " \
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
-    
-    cursor.execute(sql_command, data_to_insert)
+
+    """ Controllo se è presente una riga con la stessa occorrenza nella primary key """
+    sql_check_query = f"SELECT * FROM movies WHERE titolo = '{data_to_insert[0]}'"
+    results, _ = execute_query(conn, sql_check_query)
+
+    if results == []:
+        sql_command = f"INSERT INTO movies (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) " \
+                        f"VALUES ('{data_to_insert[0]}', '{data_to_insert[1]}', {data_to_insert[2]}, {data_to_insert[3]}, " \
+                                f"'{data_to_insert[4]}', '{data_to_insert[5]}', '{data_to_insert[6]}')"
+    else:
+        sql_command = f"UPDATE movies " \
+                        f"SET regista = '{data_to_insert[1]}', "\
+                        f"eta_autore = {data_to_insert[2]}, "\
+                        f"anno = {data_to_insert[3]}, "\
+                        f"genere = '{data_to_insert[4]}', "\
+                        f"piattaforma_1 = '{data_to_insert[5]}', "\
+                        f"piattaforma_2 = '{data_to_insert[6]}' " \
+                        f"WHERE titolo = '{data_to_insert[0]}'"
+    cursor.execute(sql_command)
 
     conn.commit()
 
@@ -117,9 +122,4 @@ def add(data_line_request: AddRowRequest) -> AddRowResponse:
     return AddRowResponse(
         status="ok"
     )
-
-#if __name__ == "__main__":
-#    import uvicorn
-#    uvicorn.run(app, host="127.0.0.1", port=8003)
-
     

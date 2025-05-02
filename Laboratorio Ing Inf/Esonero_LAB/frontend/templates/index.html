@@ -1,3 +1,4 @@
+<!--
 <h1>Esonero Laboratorio</h1>
 
 <form action="/query" method="GET">
@@ -7,24 +8,7 @@
     <button type="submit">Submit</button><br>
 </form>
 
-{% if query_output %}
-    Query output: {{ query_output }}
-{% endif %}
-
-{% if error %}
-    Errore {{ error }}: {{ error_detail }}
-{% endif %}
-
 <a href="/schema">get DB Schema summary</a><br><br>
-
-{% if schema %}
-    Schema summary: {{ schema }}
-{% endif %}
-
-{% if error %}
-    Errore: {{ error }}
-{% endif %}
-
 
 <form action="/add_data" method="POST">
     <label for="add_data_input">Add a row into the DB:</label>
@@ -32,12 +16,35 @@
 
     <button type="submit">Submit</button><br>
 </form>
+-->
 
-{% if status and status == "ok" %}
-    Inserita linea ({{ data_line }}) con successo!
-{% endif %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Esonero Laboratorio</title>
+    <link rel="stylesheet" href="./styles/styles.css">
+</head>
+<body>
+    <h1>Esonero Laboratorio</h1>
 
-{% if error %}
-    Errore {{ error }}: {{ error_detail }}
-{% endif %}
+    <div>
+        <form action="/query" method="GET">
+            <label for="query_input">Send natural language query:</label>
+            <input type="text" id="query_input" name="query_input">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
 
+    <div>
+        <a href="/schema" class="link-button">get DB Schema summary</a>
+    </div>
+
+    <div style="text-align: center;">
+        <form action="/add_data" method="POST">
+            <label for="add_data_input">Add a row into the DB:</label>
+            <input type="text" id="add_data_input" name="data_line">
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

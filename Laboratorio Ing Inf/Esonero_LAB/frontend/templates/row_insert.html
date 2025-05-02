@@ -1,0 +1,54 @@
+<!--
+<h1>Row insertion/update</h1>
+
+{% if data %}
+    {% if data["status"] == "ok"%}
+        Inserita/Aggiornata linea ({{ data_line }}) con successo!
+    {% endif %}
+
+    <h3>Raw Data</h3>
+    Status: {{ data }}
+{% endif %}
+
+{% if error %}
+    Errore {{ error }}: {{ error_detail }}
+{% endif %}
+
+<br><br>
+
+<a href="/">Torna alla home</a>-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Row insertion/update</title>
+    <link rel="stylesheet" href="./styles/styles.css">
+</head>
+<body>
+    <h1>Row insertion/update</h1>
+    
+    {% if data %}
+        <div>
+            {% if data["status"] == "ok"%}
+                Inserita/Aggiornata linea: ({{ data_line }}) con successo!
+            {% endif %}
+
+            <h3>Raw Data</h3>
+            Status: {{ data }}
+        </div>
+    {% endif %}
+    
+    {% if error %}
+        <div>
+            Errore {{ error }}: {{ error_detail }}
+        </div>
+    {% endif %}
+
+    <br><br>
+    
+    </div>
+        <a href="/">Torna alla home</a>
+    </div>
+</body>
+</html>

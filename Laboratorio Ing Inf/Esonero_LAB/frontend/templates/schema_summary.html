@@ -1,3 +1,4 @@
+<!--
 <h1>Schema summary</h1>
 
 <h3>Tabella | Colonna</h3>
@@ -17,4 +18,41 @@
 
 <br><br>
 
-<a href="/">Torna alla home</a>
+<a href="/">Torna alla home</a>-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schema summary</title>
+    <link rel="stylesheet" href="./styles/styles.css">
+</head>
+<body>
+    <h1>Schema summary</h1>
+
+    {% if schema %}
+        <div>
+            <h3>Tabella | Colonna</h3>
+
+            {% for column in schema %}
+                {{ column["table_name"] }} | {{ column["table_column"] }}<br>
+            {% endfor %}
+
+            <h3>Raw Data</h3>
+            Schema summary: {{ schema }}
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div>
+            Errore: {{ error }}
+        </div>
+    {% endif %}
+
+    <br><br>
+
+    </div>
+        <a href="/">Torna alla home</a>
+    </div>
+</body>
+</html>

@@ -1,26 +1,26 @@
 version: '3.8'
 
 services:
-  db: # This is your MariaDB service definition
-    #image: mariadb:11.7.2-ubi9 # Or a specific MariaDB version
-    image: mariadb:latest
+  db:
+    image: mariadb:11.7.2-ubi9
+    #image: mariadb:latest
     environment:
       MYSQL_ROOT_PASSWORD: pass123
       MYSQL_DATABASE: esonero_db
       MYSQL_USER: vale
       MYSQL_PASSWORD: pw12
     ports:
-      - "3306:3306" # Expose port for external access (optional, usually for debugging)
+      - "3306:3306"
     volumes:
-      - ./mariadb_data:/var/lib/mysql # Persist database data
-      - ./mariadb_init:/docker-entrypoint-initdb.d # Mount the init directory
+      - ./mariadb_data:/var/lib/mysql
+      - ./mariadb_init:/docker-entrypoint-initdb.d
     container_name: db
-    #healthcheck:
-    #  test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P3306", "-u", "root", "-ppass123"]
-    #  interval: 10s
-    #  timeout: 5s
-    #  retries: 3
-    #  start_period: 30s
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P3306", "-u", "root", "-ppass123"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   backend:
     build: ./backend
@@ -28,9 +28,9 @@ services:
       - "8003:8003"
     container_name: backend
     depends_on:
-      #db:
-      #  condition: service_healthy
-      - db 
+      db:
+        condition: service_healthy
+      #- db 
        
   frontend:
     build: ./frontend

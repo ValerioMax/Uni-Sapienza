@@ -1,26 +1,6 @@
-- E' meglio connettersi una volta sola al DB appena si esegue il server e disconnetersi quando lo si chiude
-    o connettersi e disconnettersi ogni volta che si chiama un endpoint get o post
-
-- Fixare il fatto che non si vedono piu di un risultato di un bottone alla volta (perche sono in context diversi e index.html ne trova uno alla volta)
-
-- Devo ritornare TUTTE le colonne in ogni query (select *)? perche in alcune chiede selezione i titoli (devo fare select titolo oppure select * ?)
---> NON CREDO
-
 - data_line è l'input della funzione add() oppure il campo della classe Pydantic?
 
 - add() deve gestire anche inserimenti parziali di tuple come ("film1", "regista1", 54) (solo tre campi) ?
-
-- Gestisci UPDATE in caso di cambio di campi per un regista (es eta) -> vedi slide 22
-
-- I permessi chmod 0777 darli dal docker file e non metterli a mano perche il prof non li avrà ovviamente
-
-- Fare una tabella per i film e una per i registi
-
-- metti healthcheck nel docketcompose.yml (vedi se metterli o no)
-
-- gestione errori ( input invalidi -> 422 (unprocessable entity (stringa in formato sbagliato)),
-                    
-                    )
 
 - metti GRANT all permissions... per l utente non root nel DB
 
@@ -29,10 +9,6 @@
 
 - metti commenti con triplici apici python """ """ e commenti nel codice html ecc
 
-- fai script che parsa il file data.tsv e butta tutto nel DB
-
-- FAI UPDATE delle righe del database!!!!!!!!!!!!!!!!!!!!!!!
-
-- metti titolo come primary key!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 - forse fare una tabella sola se no come si implementa l'inserimento di una nuova riga? bisognerebbe specificare la tabella dove la si mette
+
+- se faccio solo docker-compose up non li runna in ordine i container

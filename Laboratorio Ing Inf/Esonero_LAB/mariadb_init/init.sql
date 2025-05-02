@@ -1,11 +1,8 @@
--- da modificare e farlo con un for che parsa il file tsv
-
 CREATE DATABASE IF NOT EXISTS esonero_db;
 USE esonero_db
 
 CREATE TABLE movies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titolo VARCHAR(255) NOT NULL,
+    titolo VARCHAR(255) PRIMARY KEY,
     regista VARCHAR(255) NOT NULL,
     eta_autore INT,
     anno INT,
