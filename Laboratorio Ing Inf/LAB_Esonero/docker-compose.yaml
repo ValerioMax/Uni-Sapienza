@@ -1,0 +1,57 @@
+#version: '3.8'
+
+services:
+  db:
+    image: mariadb:11.7.2-ubi9
+    #image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: esonero_db
+      MYSQL_USER: valerio
+      MYSQL_PASSWORD: valeriopass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/mariadb_data:/var/lib/mysql:Z
+      - ./db/mariadb_init:/docker-entrypoint-initdb.d
+    container_name: db
+    healthcheck:
+      #test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P3306", "-u", "root", "-prootpass123"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P3306", "-u", "valerio", "-pvaleriopass123"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  backend:
+    build: ./backend
+    ports:
+      - "8003:8003"
+    container_name: backend
+    depends_on:
+      db:
+        condition: service_healthy
+      #- db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: valerio #root
+      DB_PASSWORD: valeriopass123 #rootpass123
+      DB_NAME: esonero_db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+       
+  frontend:
+    build: ./frontend
+    ports:
+      - "8001:8001"
+    container_name: frontend
+    depends_on:
+      #- backend
+      backend:
+        condition: service_healthy
+  

@@ -1,16 +1,19 @@
+-- Creazione e uso del database
 CREATE DATABASE IF NOT EXISTS esonero_db;
-USE esonero_db
+USE esonero_db;
 
+-- Creazione della tabella movies
 CREATE TABLE movies (
     titolo VARCHAR(255) PRIMARY KEY,
     regista VARCHAR(255) NOT NULL,
-    eta_autore INT,
-    anno INT,
-    genere VARCHAR(255),
+    eta_autore INT NOT NULL,
+    anno INT NOT NULL,
+    genere VARCHAR(255) NOT NULL,
     piattaforma_1 VARCHAR(255),
     piattaforma_2 VARCHAR(255)
 );
 
+-- Inserimento delle righe nella tabella movies
 INSERT INTO movies (titolo, regista, eta_autore, anno, genere, piattaforma_1, piattaforma_2) VALUES
 ('Inception', 'Christopher Nolan', 54, 2010, 'Fantascienza', 'Amazon Prime Video', 'NOW'),
 ('Parasite', 'Bong Joon-ho', 55, 2019, 'Dramma', 'Netflix', ''),

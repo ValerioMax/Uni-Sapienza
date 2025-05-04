@@ -1,9 +1,0 @@
-fastapi
-uvicorn
-pydantic
-requests
-jinja2
-mariadb
-
-# non so se andrebbe usato ma così funziona
-python-multipart

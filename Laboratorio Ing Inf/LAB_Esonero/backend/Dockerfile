@@ -2,9 +2,8 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install MariaDB Connector/C dependencies
 RUN apt-get update && \
-    apt-get install -y libmariadb-dev build-essential
+    apt-get install -y libmariadb-dev build-essential curl
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

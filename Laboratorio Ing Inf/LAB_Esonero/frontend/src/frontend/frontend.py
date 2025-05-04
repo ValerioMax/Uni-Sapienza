@@ -4,8 +4,10 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 import requests
 
+# Creazione dell'applicazione web
 app = FastAPI()
-#templates = Jinja2Templates(directory="../../templates") # "../../templates" percorso runnando questo programma da dentro la cartella server/
+
+# Collegamento della cartella di template e di stili all'app
 templates = Jinja2Templates(directory="./templates")
 app.mount("/styles", StaticFiles(directory="./styles"), name="styles")
 
@@ -14,27 +16,30 @@ API_BASE_URL = "http://backend:8003"
 
 @app.get("/")
 def index(request: Request):
+    """ endpoint GET per la home page  """
+
     context = {"request": request}
     return templates.TemplateResponse("index.html", context)
 
 @app.get("/query")
 def get_query_output(request: Request):
+    """ endpoint GET per l'inserimento della query in linguaggio naturale """
+
     query = request.query_params.get("query_input")
-    if query:
-        try:
-            response = requests.get(f"{API_BASE_URL}/search/{quote(query)}")
-            response.raise_for_status()
-            data = response.json()
-            context = {"request": request, "query_output": data}
-        except requests.RequestException as e:
-            error_detail = e.response.json().get("detail")
-            context = {"request": request, "error": response.status_code, "error_detail": error_detail}
-    else:
-        context = {"request": request, "error": "Inserisci una query!"}
+    try:
+        response = requests.get(f"{API_BASE_URL}/search/{quote(query)}")
+        response.raise_for_status()
+        data = response.json()
+        context = {"request": request, "query_output": data}
+    except requests.RequestException as e:
+        error_detail = e.response.json().get("detail")
+        context = {"request": request, "error": response.status_code, "error_detail": error_detail}
     return templates.TemplateResponse("query_output.html", context)
 
 @app.get("/schema")
 def get_schema_summary(request: Request):
+    """ endpoint GET per ottenere il riassunto dello schema logico del database """
+
     try:
         response = requests.get(f"{API_BASE_URL}/schema_summary")
         response.raise_for_status()
@@ -46,16 +51,17 @@ def get_schema_summary(request: Request):
 
 @app.post("/add_data")
 def add_data(request: Request, data_line: str = Form(default=...)):
+    """ endpoint POST per l'inserimento/update di una riga nella tabella movies del database """
+    
     payload = {"data_line": data_line}
-    if payload:
-        try:
-            response = requests.post(f"{API_BASE_URL}/add", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            context = {"request": request, "data": data, "data_line": data_line}
-        except requests.RequestException as e:
-            error_detail = e.response.json().get("detail")
-            context = {"request": request, "error": response.status_code, "error_detail": error_detail}
-    else:
-        context = {"request": request, "error": "Inserisci una riga da inserire nel database!"}
+
+    try:
+        response = requests.post(f"{API_BASE_URL}/add", json=payload)
+        response.raise_for_status()
+        data = response.json()
+        context = {"request": request, "data": data, "data_line": data_line}
+    except requests.RequestException as e:
+        error_detail = e.response.json().get("detail")
+        context = {"request": request, "error": response.status_code, "error_detail": error_detail}
+
     return templates.TemplateResponse("row_insert.html", context)
