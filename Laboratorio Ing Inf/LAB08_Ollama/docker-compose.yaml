@@ -1,0 +1,18 @@
+#version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama
+    #image: mariadb:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    container_name: ollama
+
+  server:
+    build: ./server
+    ports:
+      - "8003:8003"
+    container_name: server
+  
